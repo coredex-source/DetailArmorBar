@@ -203,9 +203,14 @@ public class ArmorBarRenderer {
         }
 
         // Base stats
-        var baseArmor = player.getAttributeBaseValue(Attributes.ARMOR);
+        int baseArmor = Mth.floor(player.getAttributeBaseValue(Attributes.ARMOR));
         sumArmor += baseArmor;
         for (int i = 0; i < baseArmor; i++) {
+            armorPoints.add(new Tuple<>(ItemStack.EMPTY, CustomArmorBar.DEFAULT));
+        }
+
+        int unrepresentedArmor = Math.max(0, player.getArmorValue() - sumArmor);
+        for (int i = 0; i < unrepresentedArmor; i++) {
             armorPoints.add(new Tuple<>(ItemStack.EMPTY, CustomArmorBar.DEFAULT));
         }
 
