@@ -1,5 +1,6 @@
 package com.redlimerl.detailab;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.redlimerl.detailab.api.DetailArmorBarAPI;
 import com.redlimerl.detailab.api.render.ArmorBarRenderManager;
 import com.redlimerl.detailab.api.render.ItemBarRenderManager;
@@ -15,7 +16,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.resources.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 import java.io.File;
@@ -59,7 +59,7 @@ public class DetailArmorBar {
         // Register keybind for opening config screen (unbound by default)
         openConfigKey = Platform.registerKeyMapping(new KeyMapping(
                 "key.detailab.open_config",
-                GLFW.GLFW_KEY_UNKNOWN, // Unbound by default
+                InputConstants.UNKNOWN.getValue(), // Unbound by default
                 detailArmorBarCategory
         ));
         

@@ -6,8 +6,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.client.Minecraft;
-import org.lwjgl.glfw.GLFW;
+import net.minecraft.client.input.KeyEvent;
 
 import java.util.function.Consumer;
 
@@ -17,10 +16,6 @@ public class TextInputScreen extends Screen {
     private final String initialValue;
     private final Consumer<Integer> onValueChanged;
     private EditBox textField;
-    
-    // Key press tracking for debouncing
-    private boolean escapePressed = false;
-    private boolean enterPressed = false;
 
     public TextInputScreen(Screen parent, Component fieldLabel, String initialValue, Consumer<Integer> onValueChanged) {
         super(fieldLabel);
@@ -57,9 +52,6 @@ public class TextInputScreen extends Screen {
     public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         super.extractRenderState(context, mouseX, mouseY, delta);
         
-        // Check for keyboard input
-        this.handleKeyboardInput();
-        
         // Draw label
         context.centeredText(this.font, this.fieldLabel, this.width / 2, this.height / 2 - 35, 16777215);
         
@@ -70,25 +62,13 @@ public class TextInputScreen extends Screen {
         context.centeredText(this.font, Component.literal("Enter a number (positive or negative)"), this.width / 2, this.height / 2 + 50, 11184810);
     }
 
-    private void handleKeyboardInput() {
-        if (this.minecraft == null) return;
-        
-        long window = this.minecraft.getWindow().handle();
-        
-        // Check for ESC key with debouncing
-        boolean escapeCurrentlyPressed = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_ESCAPE) == GLFW.GLFW_PRESS;
-        if (escapeCurrentlyPressed && !escapePressed) {
-            this.onClose();
-        }
-        escapePressed = escapeCurrentlyPressed;
-        
-        // Check for ENTER key with debouncing
-        boolean enterCurrentlyPressed = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_ENTER) == GLFW.GLFW_PRESS || 
-                                       GLFW.glfwGetKey(window, GLFW.GLFW_KEY_KP_ENTER) == GLFW.GLFW_PRESS;
-        if (enterCurrentlyPressed && !enterPressed) {
+    @Override
+    public boolean keyPressed(KeyEvent event) {
+        if (event.isConfirmation()) {
             this.submitValue();
+            return true;
         }
-        enterPressed = enterCurrentlyPressed;
+        return super.keyPressed(event);
     }
 
     private void submitValue() {
